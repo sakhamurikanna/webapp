@@ -46,5 +46,6 @@ pipeline {
 			sh 'cat target/sonar/report-task.txt'
 		       }
 		} 
-	}	      
+	  }	      
+    }
 }
