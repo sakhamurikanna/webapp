@@ -38,6 +38,13 @@ pipeline {
 		     sh 'cat /var/lib/jenkins/OWASP-Dependency-Check/reports/dependency-check-report.xml'
 		}
 	}
+	stage ('Deploy-To-Tomcat') {
+            steps {
+           sshagent(['tomcat-system']) {
+                sh 'scp -o StrictHostKeyChecking=no target/*.war root@52.117.211.157:/var/lib/tomcat9/webapps/webapp.war'
+              }      
+           }       
+        }
 	stage ('SAST') {
 		steps {
 		withSonarQubeEnv('sonar') {
@@ -46,13 +53,7 @@ pipeline {
 		       }
 		}
 	}
-       stage ('Deploy-To-Tomcat') {
-            steps {
-           sshagent(['tomcat']) {
-                sh 'scp -o StrictHostKeyChecking=no target/*.war root@52.117.211.157:/var/lib/tomcat9/webapps/webapp.war'
-              }      
-           }       
-        }
+       
 	 
 	stage ('Port Scan') {
               steps {
