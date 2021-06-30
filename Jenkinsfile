@@ -62,5 +62,30 @@ pipeline {
 			sh 'cat nmap'
 		    }
 	    }
+	stage ('DAST') {
+		  
+		    	steps {
+			    sshagent(['zap']) {
+				    sh 'ssh -o StrictHostKeyChecking=no ubuntu@65.2.124.2 "sudo docker run -t owasp/zap2docker-stable zap-baseline.py -t http://52.117.211.157:8080/webapp/" || true'
+			    }
+			}
+		} 
+        stage ('Nikto Scan') {
+		    steps {
+			sh 'rm nikto-output.xml || true'
+			sh 'docker pull secfigo/nikto:latest'
+			sh 'docker run --user $(id -u):$(id -g) --rm -v $(pwd):/report -i secfigo/nikto:latest -h 52.117.211.157 -p 8080 -output /report/nikto-output.xml'
+			sh 'cat nikto-output.xml'   
+		    }
+	    }
+	    
+	 stage ('SSL Checks') {
+		    steps {
+			sh 'pip install sslyze==1.4.2'
+			sh 'python -m sslyze --regular 0 devices / Proposed for decommission:8080 --json_out sslyze-output.json'
+			sh 'cat sslyze-output.json'
+		    }
+	    }
+
      }	   
 }	    	
