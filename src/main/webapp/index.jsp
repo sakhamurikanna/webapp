@@ -80,7 +80,7 @@
     <hr>
 
     <footer>
-        <p>&copy; Company 2014</p>
+        <p>&copy; Company 2021</p>
     </footer>
 </div> <!-- /container -->
 
